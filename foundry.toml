@@ -1,0 +1,28 @@
+[profile.default]
+src = "src"
+test = "tests"
+script = "script"
+out = "out"
+libs = ["lib"]
+solc_version = "0.8.28"
+evm_version = "cancun"
+optimizer = true
+optimizer_runs = 500
+via_ir = true
+bytecode_hash = "none"
+cbor_metadata = false
+
+[profile.ci]
+fuzz = { runs = 512 }
+invariant = { runs = 256, depth = 128, fail_on_revert = false }
+
+[fmt]
+line_length = 100
+tab_width = 4
+bracket_spacing = true
+int_types = "long"
+quote_style = "double"
+number_underscore = "thousands"
+
+[lint]
+lint_on_build = true

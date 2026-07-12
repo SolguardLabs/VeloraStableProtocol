@@ -1,0 +1,26 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Velora: build",
+      "type": "shell",
+      "command": "forge build",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Velora: test",
+      "type": "shell",
+      "command": "forge test -vvv",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Velora: CI local",
+      "type": "shell",
+      "command": "bash scripts/ci.sh",
+      "problemMatcher": []
+    }
+  ]
+}
+

@@ -1,0 +1,27 @@
+# Foundry
+/cache/
+/out/
+/broadcast/
+/lib/
+
+# Cobertura y perfiles
+/coverage/
+/lcov.info
+
+# Dependencias y herramientas auxiliares
+/node_modules/
+/.idea/
+
+# Variables y datos locales
+.env
+.env.*
+!.env.example
+*.log
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Documentación interna
+vulnerability.md
+
