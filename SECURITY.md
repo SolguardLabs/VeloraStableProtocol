@@ -11,6 +11,17 @@ Los reporters son responsables de publicar precios dentro de los límites config
 precio fuera de heartbeat, un feed pausado o una observación no válida bloquean las rutas que
 dependen de valoración.
 
+```mermaid
+flowchart TD
+    TX[Operación de vault] --> A{Propietario o delegado autorizado}
+    A -->|sí| P{Activo y precio válidos}
+    P -->|sí| C{Techo, ratio y liquidez}
+    C -->|sí| S[Liquidación contable y transferencia]
+    A -->|no| X[Revertir]
+    P -->|no| X
+    C -->|no| X
+```
+
 ## Invariantes esperadas
 
 - Un vault activo conserva propietario, activo de colateral y estado de deuda asociados.
@@ -56,3 +67,8 @@ colateral a través de llamadas entre módulos.
 Los reportes internos deben indicar componente, precondiciones, secuencia reproducible,
 invariante afectada, impacto económico, severidad, propuesta de mitigación y pruebas de
 regresión recomendadas.
+
+Los hallazgos deben comunicarse mediante **Report a vulnerability** de GitHub cuando esté
+habilitado, o por un canal privado con los mantenedores. No se deben publicar detalles técnicos
+antes de coordinar una respuesta ni compartir claves o datos de terceros. La revisión local no
+demuestra exposición de activos en una red externa ni implica una auditoría independiente.
