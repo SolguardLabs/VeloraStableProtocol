@@ -1,10 +1,23 @@
 # Velora Stable Protocol
 
-![banner](./assets/banner.png)
+![VeloraStableProtocol — Solguard Labs](./assets/banner.png)
 
 Velora es un protocolo de stablecoin sobrecolateralizada para activos ERC-20. El sistema
 mantiene vaults aislados por activo, emite `VUSD` contra su valor de mercado y coordina
 repagos, redenciones y liquidaciones mediante una contabilidad de deuda por participaciones.
+
+```mermaid
+flowchart LR
+    U[Propietario] -->|colateral| V[VaultManager]
+    V -->|mint / burn| S[VUSD]
+    V -->|shares y checkpoints| D[DebtLedger]
+    O[Oráculo] --> R[Registry y riesgo]
+    R --> V
+    L[LiquidationEngine] --> V
+    Q[RedemptionQueue] --> V
+    P[StabilityPool] --> L
+    V -->|excedentes| X[SurplusPool]
+```
 
 ## Componentes
 
@@ -18,6 +31,7 @@ repagos, redenciones y liquidaciones mediante una contabilidad de deuda por part
 - `StabilityPool`: liquidez de VUSD para absorción de deuda y reparto de colateral.
 - `SurplusPool`: custodia de excedentes reclamables por propietarios de vaults.
 - `FeeController`: política acotada de comisiones de emisión y redención.
+- `VeloraPortfolioLens`: lectura agregada de posiciones para monitorización sin escritura.
 
 ## Modelo económico
 
@@ -37,6 +51,12 @@ para cada token.
 Los activos admitidos deben conservar balances nominales estables: el registro no acepta como
 colateral operativo tokens con rebases, comisiones de transferencia o cambios de decimales. En
 esos casos debe utilizarse previamente un wrapper ERC-20 compatible.
+
+Ejemplo: con 100 WETH a 2.000 VUSD/WETH, el valor del colateral es 200.000 VUSD. Si el ratio
+mínimo de emisión es 150 %, la deuda máxima teórica es 133.333,33 VUSD antes de comisiones,
+redondeos y techos del activo. Una posición con 100.000 VUSD de deuda tiene un ratio del 200 %;
+un cambio de precio a 1.100 VUSD/WETH lo reduce al 110 %, por debajo de un umbral de liquidación
+del 120 %. La cotización definitiva debe obtenerse del contrato en el bloque de ejecución.
 
 ## Requisitos
 
@@ -90,6 +110,7 @@ src/
   access/       autorización y administración diferida
   core/         vaults, deuda, colateral y comisiones
   interfaces/   superficies compartidas
+  lens/         consulta agregada de vaults
   libraries/    aritmética, valoración y transfers ERC-20
   modules/      liquidación y redención
   oracle/       publicación y consumo de precios
@@ -106,3 +127,13 @@ scripts/        comandos reproducibles de CI
 El protocolo incluye flujos completos de apertura, depósito, emisión, repago, retiro,
 liquidación, actualización de precios y redención. La suite Forge valida las invariantes
 económicas y el wiring de permisos entre módulos.
+
+## Documentación
+
+- [Arquitectura y estados](./docs/arquitectura.md)
+- [Modelo económico y liquidación](./docs/modelo-economico.md)
+- [Integración](./docs/integracion.md)
+- [Operación y seguridad](./docs/operacion.md)
+- [Política de seguridad](./SECURITY.md)
+
+El release identifica código versionado; no acredita por sí mismo un despliegue en una red externa.

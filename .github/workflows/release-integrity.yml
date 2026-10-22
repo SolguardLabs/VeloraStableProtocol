@@ -1,0 +1,26 @@
+name: release-integrity
+
+on:
+  push:
+    branches: [production]
+    tags: ["v*"]
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  refs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compare production references
+        env:
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          git ls-remote "https://github.com/${REPO}.git" 'refs/heads/main' 'refs/heads/production' 'refs/tags/v1.0.0^{}' > refs.txt
+          main=$(awk '$2=="refs/heads/main" {print $1}' refs.txt)
+          prod=$(awk '$2=="refs/heads/production" {print $1}' refs.txt)
+          tag=$(awk '$2=="refs/tags/v1.0.0^{}" {print $1}' refs.txt)
+          test -n "$main" && test "$main" = "$prod" && test "$prod" = "$tag"
